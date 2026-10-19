@@ -21,3 +21,6 @@ export function buildErrorPayload(c, code, message, details = []) {
   }
 }
 
+export function sendError(c, status, code, message, details = []) {
+  return c.json(buildErrorPayload(c, code, message, details), status)
+}
