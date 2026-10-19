@@ -23,7 +23,7 @@ app.onError((error, c) => {
   if (isApiError(error)) {
     return sendError(c, error.status, error.code, error.message, error.details)
   }
-  
+
   console.error('Unhandled error:', error)
   return sendError(
     c,
