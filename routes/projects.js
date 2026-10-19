@@ -86,3 +86,5 @@ projects.delete('/:id', (c) => {
 
   return c.body(null, 204)
 })
+
+export default projects
