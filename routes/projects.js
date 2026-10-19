@@ -84,7 +84,7 @@ projects.delete('/:id', (c) => {
     throw new ApiError(404, 'NOT_FOUND', 'Project not found.')
   }
 
-  return c.body(null, 204)
+
 })
 
 export default projects
