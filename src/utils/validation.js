@@ -94,6 +94,3 @@ export function validateProjectCreate(payload) {
   return validateWithSchema(payload, projectCreateSchema)
 }
 
-export function validateProjectPatch(payload) {
-  return validateWithSchema(payload, projectPatchSchema)
-}
