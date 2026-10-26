@@ -9,6 +9,7 @@ const idParamSchema = z
     error: 'ID must be a positive integer.',
   })
 
+  
 const projectCreateSchema = z.strictObject({
   name: z
     .string({ error: 'Project name is required.' })
