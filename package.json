@@ -1,23 +1,26 @@
 {
-  "name": "my-project-rest-api",
+  "name": "my-projects-rest-api",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply projects_db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply projects_db --remote"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.4",
-    "hono": "^4.13.13",
-    "zod": "^4.6.7"
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.12.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "drizzle-kit": "^0.31.11",
-    "eslint": "^10.13.0",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.13.0",
-    "prettier": "3.9.10",
-    "wrangler": "^4.110.0"
+    "globals": "^17.4.0",
+    "prettier": "3.8.1",
+    "wrangler": "^4.4.0"
   }
 }
