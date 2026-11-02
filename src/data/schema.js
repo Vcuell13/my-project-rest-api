@@ -28,6 +28,7 @@ export const tasks = sqliteTable(
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
   },
+  
   (table) => [
     check(
       'tasks_status_check',
