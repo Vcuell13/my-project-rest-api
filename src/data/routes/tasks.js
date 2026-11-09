@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import { deleteTask, getTaskById, updateTask } from '../data/store.js'
-import { parseJsonBody } from '../utils/body.js'
-import { ApiError } from '../utils/errors.js'
-import { sendResource } from '../utils/response.js'
-import { parseIdParam, validateTaskPatch } from '../utils/validation.js'
+import { deleteTask, getTaskById, updateTask } from '../store.js'
+import { parseJsonBody } from '../../utils/body.js'
+import { ApiError } from '../../utils/errors.js'
+import { sendResource } from '../../utils/response.js'
+import { parseIdParam, validateTaskPatch } from '../../utils/validation.js'
 
 const tasks = new Hono()
 
