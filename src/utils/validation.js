@@ -1,5 +1,8 @@
 import { z } from 'zod'
 import { ApiError } from './errors.js'
+import { TASK_STATUSES } from './constants.js'
+
+const statusMessage = `Status must be one of: ${TASK_STATUSES.join(', ')}.`
 
 const idParamSchema = z
   .string()
@@ -9,7 +12,6 @@ const idParamSchema = z
     error: 'ID must be a positive integer.',
   })
 
-  
 const projectCreateSchema = z.strictObject({
   name: z
     .string({ error: 'Project name is required.' })
@@ -27,6 +29,45 @@ const projectPatchSchema = z
       .optional(),
     description: z
       .string({ error: 'Description must be a string.' })
+      .optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (Object.keys(value).length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['body'],
+        message: 'Provide at least one field to update.',
+      })
+    }
+  })
+
+const taskCreateSchema = z.strictObject({
+  title: z
+    .string({ error: 'Task name is required.' })
+    .trim()
+    .min(1, { error: 'Task name is required.' }),
+  description: z.string({ error: 'Description must be a string.' }).optional(),
+  status: z
+    .string({ error: statusMessage })
+    .refine((value) => TASK_STATUSES.includes(value), { error: statusMessage })
+    .optional(),
+})
+
+const taskPatchSchema = z
+  .strictObject({
+    title: z
+      .string({ error: 'Task title must be a non-empty string.' })
+      .trim()
+      .min(1, { error: 'Task title must be a non-empty string.' })
+      .optional(),
+    description: z
+      .string({ error: 'Description must be a string.' })
+      .optional(),
+    status: z
+      .string({ error: statusMessage })
+      .refine((value) => TASK_STATUSES.includes(value), {
+        error: statusMessage,
+      })
       .optional(),
   })
   .superRefine((value, ctx) => {
@@ -81,6 +122,32 @@ function mapZodIssuesToDetails(issues) {
   return details
 }
 
+const registerSchema = z.strictObject({
+  email: z.email({ error: 'Email must be a valid email address.' }),
+  password: z
+    .string({ error: 'Password is required.' })
+    .min(8, { error: 'Password must be at least 8 characters.' }),
+})
+
+const loginSchema = z.strictObject({
+  email: z.email({ error: 'Email must be a valid email address.' }),
+  password: z.string({ error: 'Password is required.' }).min(1, {
+    error: 'Password is required.',
+  }),
+})
+
+const refreshSchema = z.strictObject({
+  refresh_token: z
+    .string({ error: 'Refresh token is required.' })
+    .min(1, { error: 'Refresh token is required.' }),
+})
+
+const logoutSchema = z.strictObject({
+  refresh_token: z
+    .string({ error: 'Refresh token is required.' })
+    .min(1, { error: 'Refresh token is required.' }),
+})
+
 function validateWithSchema(payload, schema) {
   const result = schema.safeParse(payload)
 
@@ -97,4 +164,28 @@ export function validateProjectCreate(payload) {
 
 export function validateProjectPatch(payload) {
   return validateWithSchema(payload, projectPatchSchema)
+}
+
+export function validateTaskCreate(payload) {
+  return validateWithSchema(payload, taskCreateSchema)
+}
+
+export function validateTaskPatch(payload) {
+  return validateWithSchema(payload, taskPatchSchema)
+}
+
+export function validateRegister(payload) {
+  return validateWithSchema(payload, registerSchema)
+}
+
+export function validateLogin(payload) {
+  return validateWithSchema(payload, loginSchema)
+}
+
+export function validateRefresh(payload) {
+  return validateWithSchema(payload, refreshSchema)
+}
+
+export function validateLogout(payload) {
+  return validateWithSchema(payload, logoutSchema)
 }
