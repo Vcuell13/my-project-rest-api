@@ -8,6 +8,13 @@
       "when": 1793589589841,
       "tag": "0000_abnormal_texas_twister",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1794197753810,
+      "tag": "0001_living_stature",
+      "breakpoints": true
     }
   ]
 }
