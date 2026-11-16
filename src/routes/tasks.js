@@ -1,5 +1,10 @@
 import { Hono } from 'hono'
-import { deleteTask, getTaskById, updateTask } from '../data/store.js'
+import { getDb } from '../data/db.js'
+import {
+  deleteTask,
+  getTaskByIdForUser,
+  updateTask,
+} from '../data/tasks.repository.js'
 import { parseJsonBody } from '../utils/body.js'
 import { ApiError } from '../utils/errors.js'
 import { sendResource } from '../utils/response.js'
@@ -7,9 +12,11 @@ import { parseIdParam, validateTaskPatch } from '../utils/validation.js'
 
 const tasks = new Hono()
 
-tasks.get('/:id', (c) => {
+tasks.get('/:id', async (c) => {
+  const userId = c.get('user').sub
   const id = parseIdParam(c.req.param('id'))
-  const task = getTaskById(id)
+  const db = getDb(c.env.DB)
+  const task = await getTaskByIdForUser(db, id, userId)
 
   if (!task) {
     throw new ApiError(404, 'NOT_FOUND', 'Task not found.')
@@ -19,6 +26,7 @@ tasks.get('/:id', (c) => {
 })
 
 tasks.patch('/:id', async (c) => {
+  const userId = c.get('user').sub
   const id = parseIdParam(c.req.param('id'))
   const payload = await parseJsonBody(c)
   const details = validateTaskPatch(payload)
@@ -32,7 +40,14 @@ tasks.patch('/:id', async (c) => {
     )
   }
 
-  const updatedTask = updateTask(id, payload)
+  const db = getDb(c.env.DB)
+
+  const task = await getTaskByIdForUser(db, id, userId)
+  if (!task) {
+    throw new ApiError(404, 'NOT_FOUND', 'Task not found.')
+  }
+
+  const updatedTask = await updateTask(db, id, payload)
 
   if (!updatedTask) {
     throw new ApiError(404, 'NOT_FOUND', 'Task not found.')
@@ -41,13 +56,15 @@ tasks.patch('/:id', async (c) => {
   return sendResource(c, updatedTask)
 })
 
-tasks.delete('/:id', (c) => {
+tasks.delete('/:id', async (c) => {
+  const userId = c.get('user').sub
   const id = parseIdParam(c.req.param('id'))
-  const deleted = deleteTask(id)
-
-  if (!deleted) {
+  const db = getDb(c.env.DB)
+  const task = await getTaskByIdForUser(db, id, userId)
+  if (!task) {
     throw new ApiError(404, 'NOT_FOUND', 'Task not found.')
   }
+  await deleteTask(db, id)
 
   return c.body(null, 204)
 })
