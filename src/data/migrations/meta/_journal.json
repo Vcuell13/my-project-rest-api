@@ -15,6 +15,13 @@
       "when": 1794197753810,
       "tag": "0001_living_stature",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1794798792148,
+      "tag": "0002_strong_cyclops",
+      "breakpoints": true
     }
   ]
 }
