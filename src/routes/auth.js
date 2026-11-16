@@ -26,7 +26,7 @@ import {
 
 const auth = new Hono()
 
-auth.post('/register', async (c) => {
+auth.post('/register', authLimiter,async (c) => {
   const payload = await parseJsonBody(c)
   const details = validateRegister(payload)
 
@@ -112,7 +112,7 @@ auth.post('/login', async (c) => {
   })
 })
 
-auth.post('/refresh', async (c) => {
+auth.post('/refresh',authLimiter, async (c) => {
   const payload = await parseJsonBody(c)
   const details = validateRefresh(payload)
 
