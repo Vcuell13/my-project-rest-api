@@ -16,6 +16,7 @@ import {
   verifyPassword,
 } from '../utils/crypto.js'
 import { ApiError } from '../utils/errors.js'
+import { rateLimitMiddleware } from '../middleware/rateLimit.js'
 import { sendResource } from '../utils/response.js'
 import {
   validateLogin,
@@ -25,8 +26,9 @@ import {
 } from '../utils/validation.js'
 
 const auth = new Hono()
+const authLimiter = rateLimitMiddleware('AUTH_LIMITER')
 
-auth.post('/register', authLimiter,async (c) => {
+auth.post('/register', authLimiter, async (c) => {
   const payload = await parseJsonBody(c)
   const details = validateRegister(payload)
 
@@ -112,7 +114,7 @@ auth.post('/login', async (c) => {
   })
 })
 
-auth.post('/refresh',authLimiter, async (c) => {
+auth.post('/refresh', authLimiter, async (c) => {
   const payload = await parseJsonBody(c)
   const details = validateRefresh(payload)
 
